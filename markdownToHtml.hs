@@ -19,10 +19,7 @@ markdownToHtml :: String -> String
 markdownToHtml = 
 
 splitDocument :: String -> (String, String)
-splitDocument markdown = case break (=="---") (lines markdown) of
-  (before, _:after) -> (unlines before, unlines $ drop 1 after)
-  _                 -> ("", "")
-
+splitDocument markdown = splitOn (onSublist "---") markdown
 
 main :: IO()
 main = do
