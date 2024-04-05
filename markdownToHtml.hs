@@ -12,12 +12,6 @@ data Metadata = Metadata
         description :: String
     }
 
-data code = "```" String "```"
-
-
-markdownToHtml :: String -> String
-markdownToHtml = 
-
 splitDocument :: String -> (String, String)
 splitDocument markdown = splitOn (onSublist "---") markdown
 
