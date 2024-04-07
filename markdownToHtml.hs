@@ -1,4 +1,4 @@
-import Data.List 
+import Data.List.Split 
 import System.IO
 import System.Directory
 
@@ -13,13 +13,22 @@ data Metadata = Metadata
     }
 
 splitDocument :: String -> (String, String)
-splitDocument markdown = splitOn (onSublist "---") markdown
+splitDocument markdown = 
+    let splitted = split (onSublist "---") markdown
+    in (splitted !! 2, splitted !! 4)
+
+parseMetadata :: String -> Metadata
+parseMetadata :: 
+
+
+
 
 main :: IO()
 main = do
     withFile "articles/defcon31q.md" ReadMode (\handle -> do
-        contents <- hGetContents handle   
-        putStr contents)
+        markdown <- hGetContents handle   
+        print (splitDocument markdown)
+        )
     
 
 
