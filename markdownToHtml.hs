@@ -31,6 +31,7 @@ parseDocument (header, document) = parseMetadata header
 parseMetadata :: String -> [String]
 parseMetadata header = tail (lines header)
 
+let test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff"]
 
 main :: IO()
 main = do
