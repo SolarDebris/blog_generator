@@ -20,10 +20,22 @@ data Metadata = Metadata
         description :: String
     }
 
+test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff"]
+
+-- A custom data structure for
+-- storing the metadata
+data Metadata = Metadata
+    {
+        title :: String,
+        category :: String,
+        date :: String,
+        description :: String
+    }
+
 -- Function that will use the results of splitDocument to parse the metadata
 -- and parse the document
 -- (NOTE this function may be useless)
-parseDocument :: (String, String) -> ( [String], [String] )
+parseDocument :: (String, String) -> ( [String],[String] )
 parseDocument (header, document) = (parseMetadata header, parseContent document)
 
 -- Function that will split document by the string "---"
@@ -39,16 +51,19 @@ parseContent content = [content]
 
 -- Function that takes a string and parses it into the Metadata class
 parseMetadata :: String -> [String]
-parseMetadata header = tail (lines header)
+parseMetadata header =
+    let meta = tail (lines header)
 
---convertToMd :: String -> String
-convertToHtml document =
-        let file = unlines (( take template 3 ) ++ (getTitle category title) ++ (template !! 3)
+-- Function that returns Value from Key: Value
+getField :: String -> String
+
+--convertToHtml :: String -> String
+createHtml :: ([String],[String]) -> String
+createHtml (header, document) = getTitle (header !! 1) (header !! 0)
 
 -- Function that returns "Category - Title"
-getTitle :: String -> String -> String
-getTitle category title =
-        let header = category ++ " - " ++ title
+getTitle :: [Char] -> [Char] -> String
+getTitle category title = category ++ " - " ++ title
 
 main :: IO()
 main = do
