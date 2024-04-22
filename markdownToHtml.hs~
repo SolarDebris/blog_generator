@@ -1,5 +1,6 @@
 import Data.List.Split 
 import System.IO
+import System.Directory
 
 test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff"]
 
@@ -23,7 +24,7 @@ data Metadata = Metadata
 -- Function that will use the results of splitDocument to parse the metadata
 -- and parse the document
 -- (NOTE this function may be useless)
-parseDocument :: (String, String) -> ( [String], String )
+parseDocument :: (String, String) -> ( [String],[String] )
 parseDocument (header, document) = (parseMetadata header, parseContent document)
 
 -- Function that will split document by the string "---"
@@ -34,28 +35,20 @@ splitDocument markdown =
     in (splitted !! 2, splitted !! 4)
 
 -- Functiont that takes markdown and converts to HTML
-parseContent :: String -> String
-parseContent content = content
+parseContent :: String -> [String]
+parseContent content = [content]
 
 -- Function that takes a string and parses it into the Metadata class
 parseMetadata :: String -> [String]
-parseMetadata header = map getField (tail (lines header))
+parseMetadata header =
+    let meta = tail (lines header)
 
 -- Function that returns Value from Key: Value
 getField :: String -> String
-getField line = concat $ (tail (splitOn ":" line))
 
 --convertToHtml :: String -> String
-createHtml :: ([String],String) -> [String]
-createHtml (header, document) =
-  let html = take 3 template ++
-        [getTitle (header !! 1) (header !! 0)] ++
-        take 3 (drop 3 template) ++
-        [getField (header !! 2)] ++
-        take 2 (drop 6 template) ++
-        [document] ++
-        drop 8 template
-  in html
+createHtml :: ([String],[String]) -> String
+createHtml (header, document) = getTitle (header !! 1) (header !! 0)
 
 -- Function that returns "Category - Title"
 getTitle :: [Char] -> [Char] -> String
@@ -63,10 +56,8 @@ getTitle category title = category ++ " - " ++ title
 
 main :: IO()
 main = do
-  print ( createHtml ( parseDocument (splitDocument test_document)))
-    -- withFile "articles/defcon31q.md" ReadMode (\handle -> do
-        --markdown <- hGetContents handle   
-        --print (parseDocument(splitDocument markdown))
-        --)
- 
+    withFile "articles/defcon31q.md" ReadMode (\handle -> do
+        markdown <- hGetContents handle   
+        print (parseDocument(splitDocument markdown))
+        )
     
