@@ -18,8 +18,6 @@ data Metadata = Metadata
         description :: String
     }
 
-
-
 -- Function that will use the results of splitDocument to parse the metadata
 -- and parse the document
 -- (NOTE this function may be useless)
@@ -46,7 +44,7 @@ getField :: String -> String
 getField line = concat $ (tail (splitOn ":" line))
 
 --convertToHtml :: String -> String
-createHtml :: ([String],String) -> [String]
+createHtml :: ([String],String) -> String
 createHtml (header, document) =
   let html = take 3 template ++
         [getTitle (header !! 1) (header !! 0)] ++
@@ -68,5 +66,3 @@ main = do
         --markdown <- hGetContents handle   
         --print (parseDocument(splitDocument markdown))
         --)
- 
-    
