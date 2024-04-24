@@ -1,5 +1,7 @@
 import Data.List.Split 
 import System.IO
+import Text.Pandoc
+import Text.Pandoc.Options
 
 test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff"]
 
@@ -58,6 +60,18 @@ createHtml (header, document) =
 -- Function that returns "Category - Title"
 getTitle :: [Char] -> [Char] -> String
 getTitle category title = category ++ " - " ++ title
+
+markdownToHtml String -> String
+markdownToHtml markdownFile = do
+ let pandocReaderOptions = def { readerExtensions = pandocExtensions }
+        pandocWriterOptions = def { writerHtml5 = True }
+        result = runPure $ do
+            pandoc <- readMarkdown pandocReaderOptions input
+            writeHtml5String pandocWriterOptions pandoc
+    case result of
+        Left err -> putStrLn $ "Error converting Markdown to HTML: " ++ show err
+        Right html -> do
+            putStrLn $ "Markdown converted to HTML successfully. Output file: "
 
 main :: IO()
 main = do
