@@ -1,14 +1,17 @@
-import Data.List.Split 
+import Data.List.Split
+import Data.Text (unpack, pack)
 import System.IO
 import Text.Pandoc
 import Text.Pandoc.Options
 
-test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff"]
+test_document = unlines ["---", "title: DEFCON 31 Quals Challenges", "category: Writeup", "date: June 10th, 2023","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.","---","Starting stuff","## Open House", "### Understanding the Vulnerability", "### Getting Leaks","```", "int main(void)","```", "**Bold**", "_italic_", "> Testing", "> `Inline`", "1. Test1", "- Test", "- Test",      "#### Heap Leak","![alt_text](/src/assets/images/logo.jpg)", "#### PIE Leak","#### Libc Leak", "### Read/Write Primitive"]
 
 -- Insert "Category - Title" into 4th element
 -- Insert "Date " into 6th element
 -- Insert Content into
 template = ["<div className=\"flex justify-center p-10\">", "      <div className=\"pt-14 p-10 bg-dr-current_line/40 w-1/2 h-full rounded-lg\">", "       <h2 className=\"text-dr-orange font-bold text-4xl flex justify-center text-center\">","       </h2>", "       <h6 className=\"text-dr-purple py-1 flex justify-center\">By SolarDebris</h6>", "       <h6 className=\"text-dr-foreground py-1 pb-7 flex justify-center\">", "       </h6>","        <div>", "</div></div></div>"]
+
+test_markdown = unlines ["## Open House", "### Understanding the Vulnerability", "### Getting Leaks","```", "int main(void)","```", "**Bold**", "_italic_", "> Testing", "> `Inline`", "1. Test1", "- Test", "- Test",  "#### Heap Leak","![alt_text](/src/assets/images/logo.jpg)", "#### PIE Leak","#### Libc Leak", "### Read/Write Primitive"]
 
 -- A custom data structure for
 -- storing the metadata
@@ -35,7 +38,9 @@ splitDocument markdown =
 
 -- Functiont that takes markdown and converts to HTML
 parseContent :: String -> String
-parseContent content = content
+parseContent content = case markdownToHtml content of
+                         Left err -> "Error: " ++ err
+                         Right html -> html
 
 -- Function that takes a string and parses it into the Metadata class
 parseMetadata :: String -> [String]
@@ -48,7 +53,8 @@ getField line = concat $ (tail (splitOn ":" line))
 --convertToHtml :: String -> String
 createHtml :: ([String],String) -> String
 createHtml (header, document) =
-  let html = take 3 template ++
+  let html =  unlines $
+        take 3 template ++
         [getTitle (header !! 1) (header !! 0)] ++
         take 3 (drop 3 template) ++
         [getField (header !! 2)] ++
@@ -61,22 +67,19 @@ createHtml (header, document) =
 getTitle :: [Char] -> [Char] -> String
 getTitle category title = category ++ " - " ++ title
 
-markdownToHtml String -> String
-markdownToHtml markdownFile = do
- let pandocReaderOptions = def { readerExtensions = pandocExtensions }
-        pandocWriterOptions = def { writerHtml5 = True }
-        result = runPure $ do
-            pandoc <- readMarkdown pandocReaderOptions input
-            writeHtml5String pandocWriterOptions pandoc
-    case result of
-        Left err -> putStrLn $ "Error converting Markdown to HTML: " ++ show err
-        Right html -> do
-            putStrLn $ "Markdown converted to HTML successfully. Output file: "
+markdownToHtml :: String -> Either String String
+markdownToHtml markdownText =
+    let pandocReaderOptions = def { readerExtensions = pandocExtensions }
+        pandocWriterOptions = def { writerHtmlQTags = True }
+        pandocResult = runPure $ do
+            doc <- readMarkdown pandocReaderOptions (pack markdownText)
+            writeHtml5String pandocWriterOptions doc
+    in case pandocResult of
+        Left err -> Left $ "Error converting Markdown to HTML: " ++ show err
+        Right html -> Right (unpack html)
+
 
 main :: IO()
 main = do
+  print ( markdownToHtml test_markdown )
   print ( createHtml ( parseDocument (splitDocument test_document)))
-    -- withFile "articles/defcon31q.md" ReadMode (\handle -> do
-        --markdown <- hGetContents handle   
-        --print (parseDocument(splitDocument markdown))
-        --)
