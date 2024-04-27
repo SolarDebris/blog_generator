@@ -53,7 +53,7 @@ getField line = concat $ (tail (splitOn ":" line))
 --convertToHtml :: String -> String
 createHtml :: ([String],String) -> String
 createHtml (header, document) =
-  let html =  unlines $
+    let html =  unlines $
         take 3 template ++
         [getTitle (header !! 1) (header !! 0)] ++
         take 3 (drop 3 template) ++
@@ -61,7 +61,7 @@ createHtml (header, document) =
         take 2 (drop 6 template) ++
         [document] ++
         drop 8 template
-  in html
+    in html
 
 -- Function that returns "Category - Title"
 getTitle :: [Char] -> [Char] -> String
@@ -81,5 +81,6 @@ markdownToHtml markdownText =
 
 main :: IO()
 main = do
-  print ( markdownToHtml test_markdown )
-  print ( createHtml ( parseDocument (splitDocument test_document)))
+    let ( metadata, document ) = splitDocument test_document
+    print ( createHtml ( parseDocument (metadata, document)))
+    print ( parseMetadata metadata )
