@@ -1,0 +1,38 @@
+<div className="flex justify-center p-10">
+      <div className="pt-14 p-10 bg-dr-current_line/40 w-1/2 h-full rounded-lg">
+       <h2 className="text-dr-orange font-bold text-4xl flex justify-center text-center">
+ Writeup -  DEFCON 31 Quals Challenges
+       </h2>
+       <h6 className="text-dr-purple py-1 flex justify-center">By SolarDebris</h6>
+       <h6 className="text-dr-foreground py-1 pb-7 flex justify-center">
+
+       </h6>
+        <div>
+<p>Starting stuff</p>
+<h2 id="open-house">Open House</h2>
+<h3 id="understanding-the-vulnerability">Understanding the
+Vulnerability</h3>
+<h3 id="getting-leaks">Getting Leaks</h3>
+<pre><code>
+int main(void)
+</code></pre>
+<p><strong>Bold</strong> <em>italic</em> &gt; Testing</p>
+<blockquote>
+<p><code>Inline</code></p>
+</blockquote>
+<ol type="1">
+<li>Test1</li>
+</ol>
+<ul>
+<li><p>Test</p></li>
+<li><p>Test</p></li>
+</ul>
+<h4 id="heap-leak">Heap Leak</h4>
+<figure>
+<img src="/src/assets/images/logo.jpg" alt="alt_text" />
+<figcaption aria-hidden="true">alt_text</figcaption>
+</figure>
+<h4 id="pie-leak">PIE Leak</h4>
+<h4 id="libc-leak">Libc Leak</h4>
+<h3 id="readwrite-primitive">Read/Write Primitive</h3>
+</div></div></div>
