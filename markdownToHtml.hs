@@ -39,16 +39,14 @@ getField line = concat $ (tail (splitOn ":" line))
 
 --convertToHtml :: String -> String
 createHtml :: ([String],String) -> String
-createHtml (header, document) =
-  let html =  unlines $
+createHtml (header, document) = unlines $
         take 3 template ++
         [getTitle ((header !! 3), (header !! 1))] ++
         take 3 (drop 3 template) ++
-        [getField (header !! 5)] ++
+        [getField (header !! 6)] ++
         take 2 (drop 6 template) ++
         [document] ++
         drop 8 template
-  in html
 
 -- Function that returns "Category - Title"
 getTitle :: ([Char],[Char]) -> String
@@ -76,3 +74,4 @@ main = do
 
     let filename = "output.txt"
     writeFile filename html_file
+    --print ( createHtml ( parseDocument (metadata, document)))
