@@ -1,6 +1,7 @@
 import Data.List.Split
 import Data.Text (unpack, pack)
 import System.IO
+import System.Directory (listDirectory)
 import Text.Pandoc
 import Text.Pandoc.Options
 
@@ -43,7 +44,7 @@ createHtml (header, document) = unlines $
         take 3 template ++
         [getTitle ((header !! 3), (header !! 1))] ++
         take 3 (drop 3 template) ++
-        [getField (header !! 6)] ++
+        [getField (header !! 5)] ++
         take 2 (drop 6 template) ++
         [document] ++
         drop 8 template
@@ -64,8 +65,13 @@ markdownToHtml markdownText =
         Left err -> Left $ "Error converting Markdown to HTML: " ++ show err
         Right html -> Right (unpack html)
 
+printDirectory :: FilePath -> String
+printDirectory filepath = listDirectory filepath
+
 main :: IO()
 main = do
+    print ( printDirectory "/home/solardebris/development/blog_generator/articles" ) 
+    
     let ( metadata, document ) = splitDocument test_document
     print ( createHtml ( parseDocument (metadata,document) ) )
     let html_file = createHtml ( parseDocument (metadata, document) ) 
