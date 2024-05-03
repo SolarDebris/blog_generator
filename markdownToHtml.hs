@@ -1,9 +1,14 @@
 import Data.List.Split
+import Data.List (intercalate)
+import Data.Typeable (typeOf)
 import Data.Text (unpack, pack)
 import System.IO
 import System.Directory (listDirectory)
 import Text.Pandoc
 import Text.Pandoc.Options
+
+
+outDir = "out/"
 
 test_document = unlines ["---\n", "title: DEFCON 31 Quals Challenges\n", "category: Writeup\n", "date: June 10th, 2023\n","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.\n","---\n","Starting stuff\n","## Open House\n", "### Understanding the Vulnerability\n", "### Getting Leaks\n","```\n", "int main(void)\n","```\n", "**Bold**", "_italic_", "> Testing\n", "> `Inline`\n", "1. Test1\n", "- Test\n", "- Test\n",      "#### Heap Leak\n","![alt_text](/src/assets/images/logo.jpg)\n", "#### PIE Leak\n","#### Libc Leak\n", "### Read/Write Primitive\n"]
 
@@ -42,9 +47,9 @@ getField line = concat $ (tail (splitOn ":" line))
 createHtml :: ([String],String) -> String
 createHtml (header, document) = unlines $
         take 3 template ++
-        [getTitle ((header !! 3), (header !! 1))] ++
+        [getTitle ((header !! 1), (header !! 0))] ++
         take 3 (drop 3 template) ++
-        [getField (header !! 5)] ++
+        [header !! 2] ++
         take 2 (drop 6 template) ++
         [document] ++
         drop 8 template
@@ -65,19 +70,33 @@ markdownToHtml markdownText =
         Left err -> Left $ "Error converting Markdown to HTML: " ++ show err
         Right html -> Right (unpack html)
 
-printDirectory :: FilePath -> String
-printDirectory filepath = listDirectory filepath
+replaceExtension :: FilePath -> FilePath
+replaceExtension md_file = outDir ++ head (splitOn "." md_file) ++ ".html"
+
+convertFile :: FilePath -> IO ()
+convertFile sourceFile = do
+
+    let source = "articles/" ++ sourceFile
+
+    let new_file = replaceExtension sourceFile
+
+    handle <- openFile source ReadMode
+    contents <- hGetContents handle
+
+    putStrLn $ "Converting " ++ sourceFile ++ " to " ++ new_file
+    let ( metadata, document ) = splitDocument contents
+
+    let html_file = createHtml ( parseDocument (metadata, document) )
+
+    writeFile new_file html_file
+    hClose handle
 
 main :: IO()
 main = do
-    print ( printDirectory "/home/solardebris/development/blog_generator/articles" ) 
-    
-    let ( metadata, document ) = splitDocument test_document
-    print ( createHtml ( parseDocument (metadata,document) ) )
-    let html_file = createHtml ( parseDocument (metadata, document) ) 
 
-    print ( parseMetadata metadata )
+    let directory = "/home/solardebris/dev/articles"
 
-    let filename = "output.txt"
-    writeFile filename html_file
-    --print ( createHtml ( parseDocument (metadata, document)))
+    files <- listDirectory directory
+
+    print files
+    mapM_ convertFile files
