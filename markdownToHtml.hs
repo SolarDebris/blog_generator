@@ -4,11 +4,12 @@ import Data.Typeable (typeOf)
 import Data.Text (unpack, pack)
 import System.IO
 import System.Directory (listDirectory)
+import System.Environment
 import Text.Pandoc
 import Text.Pandoc.Options
 
 
-outDir = "out/"
+
 
 test_document = unlines ["---\n", "title: DEFCON 31 Quals Challenges\n", "category: Writeup\n", "date: June 10th, 2023\n","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.\n","---\n","Starting stuff\n","## Open House\n", "### Understanding the Vulnerability\n", "### Getting Leaks\n","```\n", "int main(void)\n","```\n", "**Bold**", "_italic_", "> Testing\n", "> `Inline`\n", "1. Test1\n", "- Test\n", "- Test\n",      "#### Heap Leak\n","![alt_text](/src/assets/images/logo.jpg)\n", "#### PIE Leak\n","#### Libc Leak\n", "### Read/Write Primitive\n"]
 
@@ -70,15 +71,15 @@ markdownToHtml markdownText =
         Left err -> Left $ "Error converting Markdown to HTML: " ++ show err
         Right html -> Right (unpack html)
 
-replaceExtension :: FilePath -> FilePath
-replaceExtension md_file = outDir ++ head (splitOn "." md_file) ++ ".html"
+replaceExtension :: FilePath -> FilePath -> FilePath
+replaceExtension outputDir md_file = outputDir ++ head (splitOn "." md_file) ++ ".html"
 
-convertFile :: FilePath -> IO ()
-convertFile sourceFile = do
+convertFile :: FilePath -> FilePath -> FilePath -> IO ()
+convertFile inputDir outputDir sourceFile = do
 
-    let source = "articles/" ++ sourceFile
+    let source = inputDir ++ sourceFile
 
-    let new_file = replaceExtension sourceFile
+    let new_file = replaceExtension outputDir sourceFile
 
     handle <- openFile source ReadMode
     contents <- hGetContents handle
@@ -94,9 +95,9 @@ convertFile sourceFile = do
 main :: IO()
 main = do
 
-    let directory = "/home/solardebris/dev/articles"
-
-    files <- listDirectory directory
-
-    print files
-    mapM_ convertFile files
+    args <- getArgs
+    case args of
+        [inputDir, outputDir] -> do
+            files <- listDirectory inputDir
+            mapM_ (\file -> convertFile inputDir outputDir file) files
+        _ -> putStrLn "Please provide two arguments ./mdToHtml (inputDirectory) (outputDirectory)"
