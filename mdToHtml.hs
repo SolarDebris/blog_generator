@@ -8,15 +8,12 @@ import System.Environment
 import Text.Pandoc
 import Text.Pandoc.Options
 
-
-
-
 test_document = unlines ["---\n", "title: DEFCON 31 Quals Challenges\n", "category: Writeup\n", "date: June 10th, 2023\n","description: A retroactive writeup on a few pwn and re challenges from DEFCON 31 Quals.\n","---\n","Starting stuff\n","## Open House\n", "### Understanding the Vulnerability\n", "### Getting Leaks\n","```\n", "int main(void)\n","```\n", "**Bold**", "_italic_", "> Testing\n", "> `Inline`\n", "1. Test1\n", "- Test\n", "- Test\n",      "#### Heap Leak\n","![alt_text](/src/assets/images/logo.jpg)\n", "#### PIE Leak\n","#### Libc Leak\n", "### Read/Write Primitive\n"]
 
 -- Insert "Category - Title" into 4th element
 -- Insert "Date " into 6th element
 -- Insert Content into
-template = ["<div className=\"flex justify-center p-10\">", "      <div className=\"pt-14 p-10 bg-dr-current_line/40 w-1/2 h-full rounded-lg\">", "       <h2 className=\"text-dr-orange font-bold text-4xl flex justify-center text-center\">","       </h2>", "       <h6 className=\"text-dr-purple py-1 flex justify-center\">By SolarDebris</h6>", "       <h6 className=\"text-dr-foreground py-1 pb-7 flex justify-center\">", "       </h6>","        <div>", "</div></div></div>"]
+template = ["<div>", "</div></div></div>"]
 
 -- Function that will use the results of splitDocument to parse the metadata
 -- and parse the document
@@ -46,14 +43,7 @@ getField line = concat $ (tail (splitOn ":" line))
 
 --convertToHtml :: String -> String
 createHtml :: ([String],String) -> String
-createHtml (header, document) = unlines $
-        take 3 template ++
-        [getTitle ((header !! 1), (header !! 0))] ++
-        take 3 (drop 3 template) ++
-        [header !! 2] ++
-        take 2 (drop 6 template) ++
-        [document] ++
-        drop 8 template
+createHtml (header, document) = unlines $ [document]
 
 -- Function that returns "Category - Title"
 getTitle :: ([Char],[Char]) -> String

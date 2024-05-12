@@ -9,12 +9,15 @@ RUN apt install -y cabal-install \
     zlib1g-dev \
     g++ 
 
-RUN mkdir /build
-COPY mdToHtml.hs /build/
-
-
 RUN cabal update
 
 RUN cabal install --lib split \
     pandoc
+
+RUN mkdir /build
+COPY mdToHtml.hs /build/
+
+WORKDIR /build/
+RUN ghc mdToHtml.hs
+COPY mdToHtml .
 
