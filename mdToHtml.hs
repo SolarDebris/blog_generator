@@ -13,7 +13,7 @@ test_document = unlines ["---\n", "title: DEFCON 31 Quals Challenges\n", "catego
 -- Insert "Category - Title" into 4th element
 -- Insert "Date " into 6th element
 -- Insert Content into
-template = ["<div>", "</div></div></div>"]
+template = ["<div>", "</div>"]
 
 -- Function that will use the results of splitDocument to parse the metadata
 -- and parse the document
