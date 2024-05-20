@@ -10,14 +10,12 @@ RUN apt install -y cabal-install \
     g++ 
 
 RUN cabal update
-
 RUN cabal install --lib split \
     pandoc
 
 RUN mkdir /build
-COPY mdToHtml.hs /build/
+COPY mdToHtml.hs /build/mdToHtml.hs
 
 WORKDIR /build/
 RUN ghc mdToHtml.hs
-COPY mdToHtml .
 
