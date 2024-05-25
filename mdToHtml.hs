@@ -43,7 +43,7 @@ getField line = concat $ (tail (splitOn ":" line))
 
 --convertToHtml :: String -> String
 createHtml :: ([String],String) -> String
-createHtml (header, document) = unlines $ [document]
+createHtml (header, document) = unlines $ (["<div> "] ++ [document] ++ ["</div"])
 
 -- Function that returns "Category - Title"
 getTitle :: ([Char],[Char]) -> String
